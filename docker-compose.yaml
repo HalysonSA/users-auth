@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container_users_auth
+    environment:
+      POSTGRES_DB: users_auth_database
+      POSTGRES_USER: yonto
+      POSTGRES_PASSWORD: yonto
+    ports:
+      - '8001:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
