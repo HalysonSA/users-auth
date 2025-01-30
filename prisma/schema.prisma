@@ -60,10 +60,8 @@ model UserPasswordReset {
 }
 
 model RefreshToken {
-  id         String   @id @default(uuid())
-  token      String   @unique
+  token      String   @id @default(uuid())
   user_id    String
-  expires_at DateTime
   created_at DateTime @default(now())
 
   user Users @relation(fields: [user_id], references: [id])
