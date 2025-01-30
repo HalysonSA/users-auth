@@ -82,4 +82,5 @@ enum PermissionActionEnum {
   LIST
   UPDATE
   DELETE
+  ALL
 }
