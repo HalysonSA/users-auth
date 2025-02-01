@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { TokenExpiredError } from 'jsonwebtoken';
-import { InvalidCredentialsError } from '../auth/auth.errors';
+import { InvalidCredentialsError, TokenError } from '../auth/auth.errors';
 
 //TODO: better error handler
 @Catch(Error)
@@ -64,6 +64,13 @@ export class GlobalErrorFilter implements ExceptionFilter {
         return response.status(HttpStatus.FORBIDDEN).json({
           statusCode: HttpStatus.FORBIDDEN,
           message: 'Forbidden.',
+        });
+      }
+
+      if (exception instanceof TokenError) {
+        return response.status(exception.statusCode).json({
+          name: exception.name,
+          message: exception.message,
         });
       }
 
