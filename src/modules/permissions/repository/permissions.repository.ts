@@ -23,6 +23,26 @@ export class PermissionsRepository implements PermissionsRepositoryPort {
       },
     });
   }
+
+  async findPermissionsByUserId(userId: string): Promise<Permissions[]> {
+    const userPermissions = await this.prisma.usersPermissions.findMany({
+      select: {
+        permission: {
+          select: {
+            id: true,
+            role: true,
+            action: true,
+          },
+        },
+      },
+      where: {
+        user_id: userId,
+      },
+    });
+
+    return userPermissions.map((item) => item.permission);
+  }
+
   async createUserPermissionRelationship(
     userId: string,
     permissionId: string,
