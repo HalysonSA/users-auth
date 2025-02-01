@@ -23,9 +23,6 @@ export class AuthHttpController {
 
   @Get(routesV1.auth.refresh)
   async refreshToken(@Headers('authorization') token: string) {
-    console.log(token);
-
-    return { token };
-    // return await this.authService.execute();
+    return await this.authService.refreshToken(token.replace(/^Bearer\s/, ''));
   }
 }
