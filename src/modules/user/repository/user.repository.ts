@@ -10,4 +10,12 @@ export class UserRepository implements UserRepositoryPort {
   async create(user: Prisma.UsersCreateArgs): Promise<Users> {
     return await this.prisma.users.create(user);
   }
+
+  async findByEmail(email: string): Promise<Users> {
+    return await this.prisma.users.findFirstOrThrow({
+      where: {
+        email,
+      },
+    });
+  }
 }

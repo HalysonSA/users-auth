@@ -19,5 +19,6 @@ const controllers = [CreateUserHttpController];
   imports: [PermissionsModule],
   controllers: [...controllers],
   providers: [...repository, ...services],
+  exports: [...repository],
 })
 export class UserModule {}
