@@ -1,8 +1,8 @@
 import {
   Body,
   Controller,
-  Get,
   Headers,
+  HttpCode,
   Post,
   UsePipes,
   ValidationPipe,
@@ -21,12 +21,13 @@ export class AuthHttpController {
     return await this.authService.execute(data);
   }
 
+  @HttpCode(200)
   @Post(routesV1.auth.validate)
   async validateToken(@Headers('authorization') token: string) {
     return await this.authService.validateToken(token.replace(/^Bearer\s/, ''));
   }
 
-  @Get(routesV1.auth.refresh)
+  @Post(routesV1.auth.refresh)
   async refreshToken(@Headers('authorization') token: string) {
     return await this.authService.refreshToken(token.replace(/^Bearer\s/, ''));
   }
