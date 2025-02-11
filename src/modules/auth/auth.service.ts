@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserRepositoryPort } from 'src/modules/user/repository/user.repository.port';
 import { USER_REPOSITORY } from 'src/modules/user/user.token';
 import { LoginRequestDTO } from './dtos/login.dto';
@@ -49,6 +49,16 @@ export class AuthService {
     return { accessToken };
   }
 
+  async validateToken(token: string) {
+    try {
+      const decoded = verify(token, process.env.SECRET);
+
+      return { user: decoded };
+    } catch (error) {
+      throw new UnauthorizedException('Token inválido');
+    }
+  }
+
   async refreshToken(token: string) {
     const decoded = decode(token) as TokenData;
 
@@ -86,15 +96,16 @@ export class AuthService {
     const { email, password } = props;
 
     const user = await this.userRepo.findByEmail(email);
-    const userPermissions = await this.permissionsRepo.findPermissionsByUserId(
-      user.id,
-    );
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
       throw new InvalidCredentialsError();
     }
+
+    const userPermissions = await this.permissionsRepo.findPermissionsByUserId(
+      user.id,
+    );
 
     const persistentToken = sign(
       {

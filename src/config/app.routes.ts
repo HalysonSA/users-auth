@@ -9,5 +9,6 @@ export const routesV1 = {
   auth: {
     root: authRoot,
     refresh: `${authRoot}/refresh`,
+    validate: `${authRoot}/validate`,
   },
 };
