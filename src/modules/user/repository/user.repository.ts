@@ -18,4 +18,12 @@ export class UserRepository implements UserRepositoryPort {
       },
     });
   }
+
+  async findByOwnerId(id: string): Promise<Users[]> {
+    return await this.prisma.users.findMany({
+      where: {
+        owner_id: id,
+      },
+    });
+  }
 }
