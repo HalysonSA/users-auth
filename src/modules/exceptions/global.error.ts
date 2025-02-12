@@ -5,6 +5,7 @@ import {
   HttpStatus,
   ForbiddenException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { TokenExpiredError } from 'jsonwebtoken';
@@ -53,6 +54,13 @@ export class GlobalErrorFilter implements ExceptionFilter {
           });
       }
     } else {
+      if (exception instanceof UnauthorizedException) {
+        return response.status(HttpStatus.UNAUTHORIZED).json({
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: exception.message,
+        });
+      }
+
       if (exception instanceof TokenExpiredError) {
         return response.status(HttpStatus.UNAUTHORIZED).json({
           statusCode: HttpStatus.UNAUTHORIZED,

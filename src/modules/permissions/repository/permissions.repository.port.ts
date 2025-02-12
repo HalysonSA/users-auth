@@ -3,8 +3,9 @@ import { Permissions, UsersPermissions } from '@prisma/client';
 export interface PermissionsRepositoryPort {
   findByRoleAndAction(role: string, action: string): Promise<Permissions>;
   findPermissionsByUserId(userId: string): Promise<Permissions[]>;
-  createUserPermissionRelationship(
+  findAll(): Promise<Permissions[]>;
+  createUserPermissionRelationships(
     userId: string,
-    permissionId: string,
-  ): Promise<UsersPermissions>;
+    permissions: string[],
+  ): Promise<void>;
 }

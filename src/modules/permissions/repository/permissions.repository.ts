@@ -4,7 +4,6 @@ import {
   PermissionActionEnum,
   PermissionRolesEnum,
   Permissions,
-  UsersPermissions,
 } from '@prisma/client';
 import { PrismaService } from 'src/libs/database/prisma.service';
 
@@ -43,15 +42,20 @@ export class PermissionsRepository implements PermissionsRepositoryPort {
     return userPermissions.map((item) => item.permission);
   }
 
-  async createUserPermissionRelationship(
+  async createUserPermissionRelationships(
     userId: string,
-    permissionId: string,
-  ): Promise<UsersPermissions> {
-    return await this.prisma.usersPermissions.create({
-      data: {
+    permissions: string[],
+  ) {
+    await this.prisma.usersPermissions.createMany({
+      data: permissions.map((permission) => ({
         user_id: userId,
-        permission_id: permissionId,
-      },
+        permission_id: permission,
+      })),
+      skipDuplicates: true,
     });
+  }
+
+  async findAll(): Promise<Permissions[]> {
+    return await this.prisma.permissions.findMany();
   }
 }
