@@ -3,7 +3,6 @@ import {
   IsEmail,
   IsOptional,
   IsNotEmpty,
-  IsUUID,
   ValidateIf,
 } from 'class-validator';
 
@@ -24,8 +23,4 @@ export class CreateUserRequestDTO {
   @IsString()
   @IsNotEmpty()
   password: string;
-
-  @IsOptional()
-  @IsUUID()
-  owner_id?: string;
 }

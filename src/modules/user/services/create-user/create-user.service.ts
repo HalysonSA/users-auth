@@ -6,6 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { PERMISSIONS_REPOSITORY } from 'src/modules/permissions/permissions.token';
 import { PermissionsRepositoryPort } from 'src/modules/permissions/repository/permissions.repository.port';
+import { decode } from 'jsonwebtoken';
+import { TokenData } from 'src/modules/auth/auth.service';
 
 @Injectable()
 export class CreateUserService {
@@ -16,17 +18,21 @@ export class CreateUserService {
     private readonly permissionsRepo: PermissionsRepositoryPort,
   ) {}
 
-  async execute(user: CreateUserRequestDTO) {
+  async execute(user: CreateUserRequestDTO, token?: string) {
+    const decoded = decode(token) as TokenData;
     const hashedPassword = await this.generateHashedPassword(user.password);
 
     const createdUser = await this.userRepo.create({
       data: {
         ...user,
         password: hashedPassword,
+        owner_id: token ? decoded.id : undefined,
       },
     });
 
-    await this.assignDefaultPermissionIfOwner(createdUser.id, user.owner_id);
+    if (!token) {
+      await this.assignDefaultAdminPermissions(createdUser.id);
+    }
 
     return { id: createdUser.id };
   }
@@ -37,12 +43,7 @@ export class CreateUserService {
     return bcrypt.hash(passwordToHash, saltRounds);
   }
 
-  private async assignDefaultPermissionIfOwner(
-    userId: string,
-    ownerId?: string,
-  ): Promise<void> {
-    if (ownerId) return;
-
+  private async assignDefaultAdminPermissions(userId: string): Promise<void> {
     const permission = await this.permissionsRepo.findByRoleAndAction(
       'ADMIN',
       'ALL',

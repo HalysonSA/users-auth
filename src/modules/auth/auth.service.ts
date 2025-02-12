@@ -10,7 +10,7 @@ import { PermissionsRepositoryPort } from '../permissions/repository/permissions
 import { REFRESH_TOKEN_REPOSITORY } from './auth.token';
 import { RefreshTokenRepositoryPort } from './repository/refreshToken.repository.port';
 
-interface TokenData {
+export interface TokenData {
   id: string;
   name: string;
   email: string;
