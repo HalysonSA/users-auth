@@ -53,9 +53,8 @@ export class CreateUserService {
       throw new Error('Admin permission not found');
     }
 
-    await this.permissionsRepo.createUserPermissionRelationship(
-      userId,
+    await this.permissionsRepo.createUserPermissionRelationships(userId, [
       permission.id,
-    );
+    ]);
   }
 }
