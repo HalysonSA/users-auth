@@ -4,6 +4,7 @@ import {
   Post,
   UsePipes,
   ValidationPipe,
+  Headers,
 } from '@nestjs/common';
 import { routesV1 } from 'src/config/app.routes';
 import { CreateUserService } from './create-user.service';
@@ -15,7 +16,13 @@ export class CreateUserHttpController {
 
   @UsePipes(new ValidationPipe())
   @Post(routesV1.user.root)
-  async create(@Body() data: CreateUserRequestDTO) {
-    return await this.createUserService.execute(data);
+  async create(
+    @Headers('authorization') token: string,
+    @Body() data: CreateUserRequestDTO,
+  ) {
+    return await this.createUserService.execute(
+      data,
+      token ? token.replace(/^Bearer\s/, '') : undefined,
+    );
   }
 }
