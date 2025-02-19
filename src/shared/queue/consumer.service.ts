@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { ConfirmChannel } from 'amqplib';
 import { EmailTemplates, MailerService } from '../mail/mailer.service';
+import { EmailProducerProps } from './producer.service';
 
 @Injectable()
 export class ConsumerService implements OnModuleInit {
@@ -41,7 +42,9 @@ export class ConsumerService implements OnModuleInit {
         await channel.consume('emailQueue', async (message) => {
           if (message) {
             try {
-              const content = JSON.parse(message.content.toString());
+              const content: EmailProducerProps = JSON.parse(
+                message.content.toString(),
+              );
               this.logger.log('Received message:', content);
 
               switch (message.fields.routingKey) {
