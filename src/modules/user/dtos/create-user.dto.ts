@@ -3,7 +3,7 @@ import {
   IsEmail,
   IsOptional,
   IsNotEmpty,
-  ValidateIf,
+  IsPhoneNumber,
 } from 'class-validator';
 
 export class CreateUserRequestDTO {
@@ -16,11 +16,10 @@ export class CreateUserRequestDTO {
   email: string;
 
   @IsOptional()
-  @IsString()
+  @IsPhoneNumber('BR')
   phone?: string;
 
-  @ValidateIf((o) => !o.owner_id)
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   password: string;
 }

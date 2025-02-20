@@ -1,8 +1,14 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
-import { EmailProps, EmailTemplates } from '../mail/mailer.service';
+import { EmailTemplates } from '../mail/mailer.service';
 
+export interface EmailProducerProps {
+  name: string;
+  email: string;
+  password?: string;
+  resetToken?: string;
+}
 @Injectable()
 export class ProducerService {
   private channelWrapper: ChannelWrapper;
@@ -37,7 +43,7 @@ export class ProducerService {
     });
   }
 
-  async publishToQueue(mail: EmailProps, routingKey: EmailTemplates) {
+  async publishToQueue(mail: EmailProducerProps, routingKey: EmailTemplates) {
     try {
       const success = await this.channelWrapper.publish(
         process.env.EXCHANGE_NAME,

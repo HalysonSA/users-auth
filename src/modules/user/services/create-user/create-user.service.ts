@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { USER_REPOSITORY } from '../../user.token';
 import { UserRepositoryPort } from '../../repository/user.repository.port';
 import { CreateUserRequestDTO } from '../../dtos/create-user.dto';
@@ -6,8 +11,10 @@ import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { PERMISSIONS_REPOSITORY } from 'src/modules/permissions/permissions.token';
 import { PermissionsRepositoryPort } from 'src/modules/permissions/repository/permissions.repository.port';
-import { decode } from 'jsonwebtoken';
+import { decode, verify } from 'jsonwebtoken';
 import { TokenData } from 'src/modules/auth/auth.service';
+import { ProducerService } from 'src/shared/queue/producer.service';
+import { EmailTemplates } from 'src/shared/mail/mailer.service';
 
 @Injectable()
 export class CreateUserService {
@@ -16,11 +23,26 @@ export class CreateUserService {
     private readonly userRepo: UserRepositoryPort,
     @Inject(PERMISSIONS_REPOSITORY)
     private readonly permissionsRepo: PermissionsRepositoryPort,
+    private readonly queueService: ProducerService,
   ) {}
 
   async execute(user: CreateUserRequestDTO, token?: string) {
     const decoded = decode(token) as TokenData;
-    const hashedPassword = await this.generateHashedPassword(user.password);
+
+    if (!token && !user.password) {
+      throw new BadRequestException('A senha deve ser informada');
+    }
+
+    const { hashedPassword, tempPassword } = await this.generateHashedPassword(
+      user.password,
+    );
+
+    if (token) {
+      verify(token, process.env.SECRET);
+      if (!user) {
+        throw new UnauthorizedException('Token inválido ou expirado');
+      }
+    }
 
     const createdUser = await this.userRepo.create({
       data: {
@@ -31,16 +53,40 @@ export class CreateUserService {
     });
 
     if (!token) {
+      await this.queueService.publishToQueue(
+        {
+          name: user.name,
+          email: user.email,
+        },
+        EmailTemplates.WELCOME,
+      );
       await this.assignDefaultAdminPermissions(createdUser.id);
+
+      return { id: createdUser.id };
     }
+
+    await this.queueService.publishToQueue(
+      {
+        name: user.name,
+        email: user.email,
+        password: tempPassword,
+      },
+      EmailTemplates.TEMP_PASSWORD,
+    );
 
     return { id: createdUser.id };
   }
 
-  private async generateHashedPassword(password?: string): Promise<string> {
+  private async generateHashedPassword(password?: string): Promise<{
+    tempPassword: string;
+    hashedPassword: string;
+  }> {
     const saltRounds = Number(process.env.BCRYPT_SALT) || 10;
     const passwordToHash = password ?? randomBytes(8).toString('hex');
-    return bcrypt.hash(passwordToHash, saltRounds);
+    return {
+      tempPassword: passwordToHash,
+      hashedPassword: await bcrypt.hash(passwordToHash, saltRounds),
+    };
   }
 
   private async assignDefaultAdminPermissions(userId: string): Promise<void> {
