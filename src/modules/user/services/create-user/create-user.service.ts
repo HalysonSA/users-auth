@@ -7,14 +7,13 @@ import {
 import { USER_REPOSITORY } from '../../user.token';
 import { UserRepositoryPort } from '../../repository/user.repository.port';
 import { CreateUserRequestDTO } from '../../dtos/create-user.dto';
-import * as bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
 import { PERMISSIONS_REPOSITORY } from 'src/modules/permissions/permissions.token';
 import { PermissionsRepositoryPort } from 'src/modules/permissions/repository/permissions.repository.port';
 import { decode, verify } from 'jsonwebtoken';
 import { TokenData } from 'src/modules/auth/auth.service';
 import { ProducerService } from 'src/shared/queue/producer.service';
 import { EmailTemplates } from 'src/shared/mail/mailer.service';
+import { generateHashedPassword } from 'src/utils/generateHashedPassword';
 
 @Injectable()
 export class CreateUserService {
@@ -33,7 +32,7 @@ export class CreateUserService {
       throw new BadRequestException('A senha deve ser informada');
     }
 
-    const { hashedPassword, tempPassword } = await this.generateHashedPassword(
+    const { hashedPassword, tempPassword } = await generateHashedPassword(
       user.password,
     );
 
@@ -75,18 +74,6 @@ export class CreateUserService {
     );
 
     return { id: createdUser.id };
-  }
-
-  private async generateHashedPassword(password?: string): Promise<{
-    tempPassword: string;
-    hashedPassword: string;
-  }> {
-    const saltRounds = Number(process.env.BCRYPT_SALT) || 10;
-    const passwordToHash = password ?? randomBytes(8).toString('hex');
-    return {
-      tempPassword: passwordToHash,
-      hashedPassword: await bcrypt.hash(passwordToHash, saltRounds),
-    };
   }
 
   private async assignDefaultAdminPermissions(userId: string): Promise<void> {
