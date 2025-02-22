@@ -4,6 +4,8 @@ import { UserRepository } from './repository/user.repository';
 import { CreateUserService } from './services/create-user/create-user.service';
 import { CreateUserHttpController } from './services/create-user/create-user.http-controller';
 import { PermissionsModule } from '../permissions/permissions.module';
+import { ResetUserPasswordService } from './services/reset-password/reset-password.service';
+import { ResetUserPasswordHttpController } from './services/reset-password/reset-password.http-controller';
 
 const repository: Provider[] = [
   {
@@ -11,9 +13,9 @@ const repository: Provider[] = [
     useClass: UserRepository,
   },
 ];
-const services: Provider[] = [CreateUserService];
+const services: Provider[] = [CreateUserService, ResetUserPasswordService];
 
-const controllers = [CreateUserHttpController];
+const controllers = [CreateUserHttpController, ResetUserPasswordHttpController];
 
 @Module({
   imports: [PermissionsModule],

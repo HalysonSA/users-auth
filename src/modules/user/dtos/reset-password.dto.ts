@@ -1,26 +1,19 @@
 import {
-  IsString,
   IsEmail,
-  IsOptional,
   IsNotEmpty,
-  IsPhoneNumber,
+  IsString,
   IsStrongPassword,
 } from 'class-validator';
 
-export class CreateUserRequestDTO {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
+export class ResetUserPasswordRequestDTO {
   @IsEmail()
   @IsNotEmpty()
   email: string;
+}
 
-  @IsOptional()
-  @IsPhoneNumber('BR')
-  phone?: string;
-
+export class NewUserPasswordRequestDTO {
   @IsString()
+  @IsNotEmpty()
   @IsStrongPassword({
     minLength: 8,
     minLowercase: 1,
@@ -28,6 +21,5 @@ export class CreateUserRequestDTO {
     minSymbols: 1,
     minUppercase: 1,
   })
-  @IsOptional()
-  password: string;
+  newPassword: string;
 }
