@@ -19,6 +19,13 @@ export class UserRepository implements UserRepositoryPort {
       data: user,
     });
   }
+  async findById(id: string): Promise<Users> {
+    return await this.prisma.users.findFirstOrThrow({
+      where: {
+        id,
+      },
+    });
+  }
 
   async findByEmail(email: string): Promise<Users> {
     return await this.prisma.users.findFirstOrThrow({

@@ -6,6 +6,7 @@ export const routesV1 = {
   version: 'v1',
   user: {
     root: userRoot,
+    me: `${userRoot}/me`,
     resetPassword: `${userRoot}/password/reset`,
   },
   auth: {

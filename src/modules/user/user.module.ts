@@ -6,6 +6,20 @@ import { CreateUserHttpController } from './services/create-user/create-user.htt
 import { PermissionsModule } from '../permissions/permissions.module';
 import { ResetUserPasswordService } from './services/reset-password/reset-password.service';
 import { ResetUserPasswordHttpController } from './services/reset-password/reset-password.http-controller';
+import { ProfileUserService } from './services/profile-user/profile-user.service';
+import { ProfileUserHttpController } from './services/profile-user/profile-user.http-controller';
+
+const controllers = [
+  CreateUserHttpController,
+  ResetUserPasswordHttpController,
+  ProfileUserHttpController,
+];
+
+const services: Provider[] = [
+  CreateUserService,
+  ResetUserPasswordService,
+  ProfileUserService,
+];
 
 const repository: Provider[] = [
   {
@@ -13,9 +27,6 @@ const repository: Provider[] = [
     useClass: UserRepository,
   },
 ];
-const services: Provider[] = [CreateUserService, ResetUserPasswordService];
-
-const controllers = [CreateUserHttpController, ResetUserPasswordHttpController];
 
 @Module({
   imports: [PermissionsModule],
