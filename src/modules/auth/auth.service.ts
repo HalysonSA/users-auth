@@ -12,9 +12,7 @@ import { RefreshTokenRepositoryPort } from './repository/refreshToken.repository
 
 export interface TokenData {
   id: string;
-  name: string;
-  email: string;
-  phone: string;
+  ownerId: string;
   permissions: string[];
 }
 
@@ -35,9 +33,7 @@ export class AuthService {
     const accessToken = sign(
       {
         id: decoded.id,
-        name: decoded.name,
-        email: decoded.email,
-        phone: decoded.phone,
+        ownerId: decoded.ownerId,
         permissions: decoded.permissions,
       },
       process.env.SECRET,
@@ -110,9 +106,7 @@ export class AuthService {
     const persistentToken = sign(
       {
         id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
+        ownerId: user.owner_id,
         permissions:
           userPermissions.map((perm) => `${perm.role}:${perm.action}`) || [],
       },
