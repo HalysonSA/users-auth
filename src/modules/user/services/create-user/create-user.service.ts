@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { USER_REPOSITORY } from '../../user.token';
 import { UserRepositoryPort } from '../../repository/user.repository.port';
 import { CreateUserRequestDTO } from '../../dtos/create-user.dto';
@@ -38,16 +33,17 @@ export class CreateUserService {
 
     if (token) {
       verify(token, process.env.SECRET);
-      if (!user) {
-        throw new UnauthorizedException('Token inválido ou expirado');
-      }
     }
 
     const createdUser = await this.userRepo.create({
       data: {
         ...user,
         password: hashedPassword,
-        owner_id: token ? decoded.id : undefined,
+        owner_id: token
+          ? decoded.ownerId
+            ? decoded.ownerId
+            : decoded.id
+          : undefined,
       },
     });
 
