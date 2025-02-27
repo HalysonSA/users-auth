@@ -1,4 +1,17 @@
 services:
+  backend:
+    container_name: auth_api
+    build: .
+    ports:
+      - '9000:9000'
+    depends_on:
+      - postgres
+      - rabbitmq
+    env_file:
+      - docker.env
+    networks:
+      - app-network
+
   postgres:
     image: postgres:latest
     container_name: postgres_container_users_auth
@@ -10,6 +23,9 @@ services:
       - '8001:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
   rabbitmq:
     image: 'rabbitmq:3-management'
     container_name: rabbitmq
@@ -19,5 +35,10 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: yonto
       RABBITMQ_DEFAULT_PASS: yonto
+    networks:
+      - app-network
 volumes:
   postgres_data:
+networks:
+  app-network:
+    driver: bridge
