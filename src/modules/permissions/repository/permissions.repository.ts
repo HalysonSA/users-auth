@@ -55,6 +55,18 @@ export class PermissionsRepository implements PermissionsRepositoryPort {
     });
   }
 
+  async deleteUserPermissionRelationship(
+    user_id: string,
+    permissions: string[],
+  ) {
+    await this.prisma.usersPermissions.deleteMany({
+      where: {
+        user_id,
+        permission_id: { in: permissions },
+      },
+    });
+  }
+
   async findAll(): Promise<Permissions[]> {
     return await this.prisma.permissions.findMany();
   }
