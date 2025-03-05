@@ -1,6 +1,6 @@
 import { IsUUID, IsArray, IsNotEmpty } from 'class-validator';
 
-export class CreateRelationshipUserPermissionRequestDTO {
+export class RelationshipUserPermissionRequestDTO {
   @IsUUID()
   @IsNotEmpty()
   userId: string;

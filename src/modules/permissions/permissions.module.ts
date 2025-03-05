@@ -7,6 +7,8 @@ import { ListPermissionsHttpController } from './service/list-permissions/list-p
 import { CreateRelationshipUserPermissionHttpController } from './service/create-relationship/create-relationship.http-controller';
 import { USER_REPOSITORY } from '../user/user.token';
 import { UserRepository } from '../user/repository/user.repository';
+import { DeleteRelationshipUserPermissionHttpController } from './service/delete-relationship/delete-relationship.http-controller';
+import { DeleteRelationshipUserPermissionService } from './service/delete-relationship/delete-relationship.service';
 
 const repository: Provider[] = [
   {
@@ -22,11 +24,13 @@ const repository: Provider[] = [
 const controllers = [
   ListPermissionsHttpController,
   CreateRelationshipUserPermissionHttpController,
+  DeleteRelationshipUserPermissionHttpController,
 ];
 
 const services: Provider[] = [
   ListPermissionService,
   CreateRelationshipUserPermissionService,
+  DeleteRelationshipUserPermissionService,
 ];
 
 @Module({

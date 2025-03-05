@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PermissionsRepositoryPort } from '../../repository/permissions.repository.port';
 import { PERMISSIONS_REPOSITORY } from '../../permissions.token';
 import { RelationshipUserPermissionRequestDTO } from '../../dtos/user-permission-relationship.dto';
@@ -7,7 +12,7 @@ import { USER_REPOSITORY } from 'src/modules/user/user.token';
 import { UserRepositoryPort } from 'src/modules/user/repository/user.repository.port';
 
 @Injectable()
-export class CreateRelationshipUserPermissionService {
+export class DeleteRelationshipUserPermissionService {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepo: UserRepositoryPort,
@@ -22,17 +27,17 @@ export class CreateRelationshipUserPermissionService {
       throw new UnauthorizedException();
     }
 
-    const myUsers = await this.userRepo.findByOwnerId(user.id);
+    const myUser = await this.userRepo.findById(userId);
 
-    const isUserUnderManagement = myUsers.some((u) => u.id === userId);
-
-    if (!isUserUnderManagement) {
-      throw new UnauthorizedException(
-        'Você não tem permissão para modificar este usuário.',
-      );
+    if (!myUser) {
+      throw new NotFoundException();
     }
 
-    await this.permissionsRepo.createUserPermissionRelationships(
+    if (!(myUser.owner_id === user.id)) {
+      throw new UnauthorizedException();
+    }
+
+    await this.permissionsRepo.deleteUserPermissionRelationship(
       userId,
       permissions,
     );

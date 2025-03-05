@@ -8,4 +8,8 @@ export interface PermissionsRepositoryPort {
     userId: string,
     permissions: string[],
   ): Promise<void>;
+  deleteUserPermissionRelationship(
+    user_id: string,
+    permissions: string[],
+  ): Promise<void>;
 }
