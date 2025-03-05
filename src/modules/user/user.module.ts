@@ -8,17 +8,21 @@ import { ResetUserPasswordService } from './services/reset-password/reset-passwo
 import { ResetUserPasswordHttpController } from './services/reset-password/reset-password.http-controller';
 import { ProfileUserService } from './services/profile-user/profile-user.service';
 import { ProfileUserHttpController } from './services/profile-user/profile-user.http-controller';
+import { DeleteUserHttpController } from './services/delete-user/delete-user.http-controller';
+import { DeleteUserService } from './services/delete-user/delete-user.service';
 
 const controllers = [
   CreateUserHttpController,
   ResetUserPasswordHttpController,
   ProfileUserHttpController,
+  DeleteUserHttpController,
 ];
 
 const services: Provider[] = [
   CreateUserService,
   ResetUserPasswordService,
   ProfileUserService,
+  DeleteUserService,
 ];
 
 const repository: Provider[] = [

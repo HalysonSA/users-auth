@@ -2,6 +2,7 @@ import { Prisma, UserPasswordReset, Users } from '@prisma/client';
 
 export interface UserRepositoryPort {
   create(user: Prisma.UsersCreateArgs): Promise<Users>;
+  delete(id: string): Promise<void>;
   update(id: string, user: Prisma.UsersUpdateInput): Promise<Users>;
   findByOwnerId(id: string): Promise<Users[]>;
   findById(id: string): Promise<Users>;
