@@ -11,6 +11,17 @@ export class UserRepository implements UserRepositoryPort {
     return await this.prisma.users.create(user);
   }
 
+  async delete(id: string): Promise<void> {
+    await this.prisma.users.update({
+      where: {
+        id,
+      },
+      data: {
+        deleted_at: new Date(),
+      },
+    });
+  }
+
   async update(id: string, user: Prisma.UsersUpdateInput): Promise<Users> {
     return await this.prisma.users.update({
       where: {
@@ -19,6 +30,7 @@ export class UserRepository implements UserRepositoryPort {
       data: user,
     });
   }
+
   async findById(id: string): Promise<Users> {
     return await this.prisma.users.findFirstOrThrow({
       where: {
