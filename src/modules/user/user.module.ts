@@ -12,12 +12,15 @@ import { DeleteUserHttpController } from './services/delete-user/delete-user.htt
 import { DeleteUserService } from './services/delete-user/delete-user.service';
 import { REFRESH_TOKEN_REPOSITORY } from '../auth/auth.token';
 import { RefreshTokenRepository } from '../auth/repository/refreshToken.repository';
+import { ListUsersService } from './services/list-users/list-users.service';
+import { ListUsersHttpController } from './services/list-users/list-user.http-controller';
 
 const controllers = [
   CreateUserHttpController,
   ResetUserPasswordHttpController,
   ProfileUserHttpController,
   DeleteUserHttpController,
+  ListUsersHttpController,
 ];
 
 const services: Provider[] = [
@@ -25,6 +28,7 @@ const services: Provider[] = [
   ResetUserPasswordService,
   ProfileUserService,
   DeleteUserService,
+  ListUsersService,
 ];
 
 const repository: Provider[] = [

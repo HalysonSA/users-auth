@@ -10,4 +10,5 @@ export interface UserRepositoryPort {
   createResetPassword(email: string, token: string): Promise<UserPasswordReset>;
   removeResetPassword(id: string): Promise<void>;
   findResetPasswordByToken(token: string): Promise<UserPasswordReset>;
+  findAllUsersByUser(userId: string, ownerId?: string): Promise<Users[]>;
 }
