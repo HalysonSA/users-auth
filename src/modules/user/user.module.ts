@@ -10,6 +10,8 @@ import { ProfileUserService } from './services/profile-user/profile-user.service
 import { ProfileUserHttpController } from './services/profile-user/profile-user.http-controller';
 import { DeleteUserHttpController } from './services/delete-user/delete-user.http-controller';
 import { DeleteUserService } from './services/delete-user/delete-user.service';
+import { REFRESH_TOKEN_REPOSITORY } from '../auth/auth.token';
+import { RefreshTokenRepository } from '../auth/repository/refreshToken.repository';
 
 const controllers = [
   CreateUserHttpController,
@@ -29,6 +31,10 @@ const repository: Provider[] = [
   {
     provide: USER_REPOSITORY,
     useClass: UserRepository,
+  },
+  {
+    provide: REFRESH_TOKEN_REPOSITORY,
+    useClass: RefreshTokenRepository,
   },
 ];
 

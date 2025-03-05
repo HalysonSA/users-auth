@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserRepositoryPort } from 'src/modules/user/repository/user.repository.port';
 import { USER_REPOSITORY } from 'src/modules/user/user.token';
 import { LoginRequestDTO } from './dtos/login.dto';
@@ -92,6 +97,10 @@ export class AuthService {
     const { email, password } = props;
 
     const user = await this.userRepo.findByEmail(email);
+
+    if (user.deleted_at) {
+      throw new ForbiddenException();
+    }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
