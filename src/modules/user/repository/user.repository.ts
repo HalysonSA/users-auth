@@ -85,4 +85,12 @@ export class UserRepository implements UserRepositoryPort {
       },
     });
   }
+
+  async findAllUsersByUser(userId: string, ownerId?: string): Promise<Users[]> {
+    return this.prisma.users.findMany({
+      where: {
+        OR: [{ owner_id: userId }, ...(ownerId ? [{ owner_id: ownerId }] : [])],
+      },
+    });
+  }
 }
